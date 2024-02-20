@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="joystick" default="false"/>
+
+	<include file="$(find rosserial_server)/launch/socket.launch"/>
+
+	<!-- <node pkg="rosserial_python" type="serial_node.py" name="rosserial_node" output="screen">
+        <param name="port" value="/dev/ttyUSB0"/> 
+        <param name="baud" value="115200"/>  
+    </node> -->
+	
+	<include file="$(find mecanumbot)/launch/joystick.launch" if="$(arg joystick)"/>
+
+</launch>
