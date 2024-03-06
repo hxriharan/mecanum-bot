@@ -1,7 +1,7 @@
 #include <PID_v1.h>
 
 
-double kp=50,ki=0,kd=0;  // previously kp:90 ki:40 kd:0
+double kp=50,ki=0,kd=0; //previously 90 40 0
 double LF_setpoint = 0, RF_setpoint = 0, LB_setpoint = 0, RB_setpoint = 0;
 
 PID *RF_PID, *LF_PID, *LB_PID, *RB_PID;
@@ -15,7 +15,7 @@ void setupPID(){
 	LB_PID = new PID(&LB_vel, &LB_pwm, &LB_setpoint, kp, ki, kd, DIRECT);
 	RB_PID = new PID(&RB_vel, &RB_pwm, &RB_setpoint, kp, ki, kd, DIRECT);
 
-  RF_PID->SetMode(AUTOMATIC);
+  	RF_PID->SetMode(AUTOMATIC);
 	RF_PID->SetOutputLimits(-255,255);
 
 	LF_PID->SetMode(AUTOMATIC);

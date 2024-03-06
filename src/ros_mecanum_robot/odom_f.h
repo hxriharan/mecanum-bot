@@ -1,3 +1,5 @@
+#ifndef ODOM_F_H
+#define ODOM_F_H
 const int odomRate = 10;
 
 int odom_time = 0, _odom_time = 0;
@@ -28,4 +30,7 @@ void loopOdom() {
 		_odom_time = odom_time;
 	}
 }
+
+#endif // ODOM_F_H
+
 
