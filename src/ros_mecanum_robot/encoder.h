@@ -1,6 +1,5 @@
 #include <ESPRotary.h>
-#include "pose.h"
-#include "odometry.h"
+
 const int enc_rate = 10;
 
 const uint8_t LF_ENA = 39;
@@ -17,7 +16,7 @@ const uint8_t RB_ENB = 34;
 
 ESPRotary LF_ENC, RF_ENC, LB_ENC, RB_ENC;
 int LF_pos = 0, RF_pos = 0, LB_pos = 0, RB_pos = 0;
-// double LF_vel = 0, RF_vel = 0, LB_vel = 0, RB_vel = 0;
+double LF_vel = 0, RF_vel = 0, LB_vel = 0, RB_vel = 0;
 int LF_time = 0, RF_time = 0, LB_time = 0, RB_time = 0;
 
 void updateLF(ESPRotary& r)
@@ -86,11 +85,6 @@ void loopEncoders(){
 	RF_ENC.loop();
 	LB_ENC.loop();
 	RB_ENC.loop();
-
-  leftFrontTicks = LF_pos;
-  rightFrontTicks = RF_pos;
-  leftBackTicks = LB_pos;
-  rightBackTicks = RB_pos;
 
 	if (millis() - LF_time > 1000/enc_rate)
 	{

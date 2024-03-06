@@ -11,10 +11,10 @@ void loopDrive()
     return;
   y=-y;
   // Source: https://www.robotsforroboticists.com/drive-kinematics/
-  LF_setpoint = (x - y - z * (wheel_separation_width + wheel_separation_length))*-1;
-  RF_setpoint = (x + y + z * (wheel_separation_width + wheel_separation_length));
-  LB_setpoint = (x + y - z * (wheel_separation_width + wheel_separation_length))*-1;
-  RB_setpoint = (x - y + z * (wheel_separation_width + wheel_separation_length));
+  LF_setpoint = (x - y - z * (wheel_separation_width + wheel_separation_length)) / wheel_radius;
+  RF_setpoint = (x + y + z * (wheel_separation_width + wheel_separation_length)) / wheel_radius;
+  LB_setpoint = (x + y - z * (wheel_separation_width + wheel_separation_length)) / wheel_radius;
+  RB_setpoint = (x - y + z * (wheel_separation_width + wheel_separation_length)) / wheel_radius;
 
   #if DEBUG_DRIVE
     Serial.printf("[DEBUG] (drive) LF: %f, RF: %f, LB: %f, RB: %f\n", LF_setpoint, RF_setpoint, LB_setpoint, RB_setpoint);

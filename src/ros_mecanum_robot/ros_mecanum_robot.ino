@@ -7,12 +7,10 @@
 #include "ota.h"
 #include "ros.h"
 #include "drive.h"
-// #include "odom_f.h"
 #include "encoder.h"
 #include "pid.h"
 #include "motor.h"
-#include "pose.h"
-#include "odometry.h"
+#include "odom_f.h"
 
 #define LED_BUILTIN 2
 
@@ -32,8 +30,6 @@ void setup()
   setupEncoders();
   setupPID();
   setupMotor();
-  // setupPose();
-  setupOdometry();
   // setupOdom();
 }
 
@@ -45,8 +41,6 @@ void loop()
   loopEncoders();
   loopPID();
   loopMotor();
-  // loopPose(leftFrontTicks, rightFrontTicks, leftBackTicks, rightBackTicks);
-  loopOdometry(leftFrontTicks, rightFrontTicks, leftBackTicks, rightBackTicks);
-  // loopPose();
-  // loopOdom();
+  // loopOdometry(leftFrontTicks, rightFrontTicks, leftBackTicks, rightBackTicks);
+  loopOdom();
 }
