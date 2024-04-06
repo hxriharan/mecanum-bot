@@ -1,52 +1,41 @@
-// #ifndef ODOM_H
-// #define ODOM_H
+const int odomRate = 10;
 
-// #include <cmath>
-// #include "distance.h"
-// #include "encoder.h"
-// // Constants
-// extern const double ticks_per_meter;
-// float wheel_radius = 0.152/2;
-// float wheel_separation_width = 0.460;
-// float wheel_separation_length = 0.460;
+int odom_time = 0, _odom_time = 0;
 
+double x_pos = 0, y_pos = 0, theta_pos = 0;
+double x_vel = 0, y_vel = 0, theta_vel = 0;
 
-// // Function to calculate odometry
-// void calculateOdometry(int leftFront_ticks, int rightFront_ticks, int leftBack_ticks, int rightBack_ticks) {
-    
-//     // Print encoder values
-//     Serial.print("Left Front Encoder Ticks: ");
-//     Serial.println(leftFront_ticks);
-//     Serial.print("Right Front Encoder Ticks: ");
-//     Serial.println(rightFront_ticks);
-//     Serial.print("Left Back Encoder Ticks: ");
-//     Serial.println(leftBack_ticks);
-//     Serial.print("Right Back Encoder Ticks: ");
-//     Serial.println(rightBack_ticks);
+extern float wheel_radius, wheel_separation_width, wheel_separation_length;
+extern double LF_vel, RF_vel, LB_vel, RB_vel;
 
-//     // Calculate wheel velocities
-//     float LF_vel = leftFront_ticks / ticks_per_meter;
-//     float RF_vel = rightFront_ticks / ticks_per_meter;
-//     float LB_vel = leftBack_ticks / ticks_per_meter;
-//     float RB_vel = rightBack_ticks / ticks_per_meter;
+const double ticks_per_rotation = 40;
+int LF_prev_pos, RF_prev_pos, LB_prev_pos, RB_prev_pos;
 
-//     // Calculate total distance traveled
-//     double total_distance_traveled = calculateTotalDistanceTraveled(leftFront_ticks, rightFront_ticks, leftBack_ticks, rightBack_ticks);
+void loopOdom() {
 
-//     // Print wheel velocities
-//     Serial.print("LF_vel: ");
-//     Serial.print(LF_vel);
-//     Serial.print(", RF_vel: ");
-//     Serial.print(RF_vel);
-//     Serial.print(", LB_vel: ");
-//     Serial.print(LB_vel);
-//     Serial.print(", RB_vel: ");
-//     Serial.println(RB_vel);
+    if (millis() - odom_time > 1000 / odomRate) {
+        
+        _odom_time = odom_time;
+        odom_time = millis();
+        double dt = (odom_time - _odom_time) / 1000.0; // Convert time difference to seconds
 
-//     // Print total distance traveled
-//     Serial.print("Total Distance Traveled: ");
-//     Serial.print(total_distance_traveled);
-//     Serial.println(" meters");
-// }
+        // Calculate resultant linear velocities
+        x_vel = (LF_vel + RF_vel + LB_vel + RB_vel) / 4.0 * wheel_radius;
+        y_vel = (-LF_vel + RF_vel + LB_vel - RB_vel) / 4.0 * wheel_radius;  
+        theta_vel = (-LF_vel + RF_vel - LB_vel + RB_vel) * wheel_radius / (4.0 * (wheel_separation_width + wheel_separation_length));
 
-// #endif // ODOM_H
+        // Update positions using forward kinematics
+        x_pos += cos(theta_pos) * x_vel * dt - sin(theta_pos) * y_vel * dt;
+        y_pos += sin(theta_pos) * x_vel * dt + cos(theta_pos) * y_vel * dt;
+        theta_pos += theta_vel * dt;
+
+        // Normalize theta_pos to keep it within [0, 2 * PI)
+        theta_pos = fmod(theta_pos, 2 * PI);
+        if (theta_pos < 0) theta_pos += 2 * PI;
+		
+		#if DEBUG_ODOM
+            Serial.printf("[DEBUG] (odom) x_pos: %f, y_pos: %f, theta_pos: %f\n", x_pos, y_pos, theta_pos);
+        #endif
+	}
+	
+}

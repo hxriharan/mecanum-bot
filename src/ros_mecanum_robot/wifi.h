@@ -13,8 +13,8 @@
 #else
   // Override standard settings with user data. Example:
   const char* SSID = "Hariharan";
-  const char* PASSWORD = "Hari1234";
-  IPAddress server(172, 20, 10, 2); //192, 168, 0, 59
+  const char* PASSWORD = "Hari12345";
+  IPAddress server(172, 20, 10, 3);
   // #include "user.h"
 #endif
 
