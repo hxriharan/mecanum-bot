@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="hybrid_astar" type="hybrid_astar_node.py" name="hybrid_astar_node" output="screen"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find hybrid_astar)/rviz/hybrid_astar.rviz" />
+</launch>
+

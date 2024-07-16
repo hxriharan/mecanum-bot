@@ -1,0 +1,8 @@
+prefix=/home/hariharan/mecanum_bot_ws/devel/.private/hybrid_astar
+
+Name: hybrid_astar
+Description: Description of hybrid_astar
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
