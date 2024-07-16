@@ -1,5 +1,5 @@
 #define DEBUG_ROS 0
-#define DEBUG_ENCODERS 1
+#define DEBUG_ENCODERS 0
 #define DEBUG_DRIVE 0
 #define DEBUG_ODOM 1
 
@@ -10,8 +10,21 @@
 #include "encoder.h"
 #include "pid.h"
 #include "motor.h"
+
+#include <ros.h>
+#include <geometry_msgs/Twist.h>
+#include <nav_msgs/Odometry.h>
+#include <tf/transform_broadcaster.h>
+#include <geometry_msgs/Quaternion.h>
+#include <tf/tf.h>
 #include "odom.h"
 
+ros::NodeHandle nh;
+ros::Publisher odom_pub("/odom", &odom_msg);
+ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", onTwist);
+tf::TransformBroadcaster broadcaster;
+
+nav_msgs::Odometry odom_msg;
 #define LED_BUILTIN 2
 
 void setup()

@@ -17,13 +17,16 @@ const uint8_t RB_ENB = 34;
 ESPRotary LF_ENC, RF_ENC, LB_ENC, RB_ENC;
 int LF_pos = 0, RF_pos = 0, LB_pos = 0, RB_pos = 0;
 double LF_vel = 0, RF_vel = 0, LB_vel = 0, RB_vel = 0;
-int LF_time = 0, RF_time = 0, LB_time = 0, RB_time = 0;
+unsigned long LF_time = 0, RF_time = 0, LB_time = 0, RB_time = 0;
+extern const double ticks_per_rotation;
 
 void updateLF(ESPRotary& r)
 {
-	int time = millis();
+	unsigned long time = millis();
 	int pos = r.getPosition();
-	LF_vel = (float) (pos - LF_pos) / (time - LF_time); // LF_vel is in rad/s 
+	// LF_vel = (2 * PI * (pos - LF_pos)) / (ticks_per_rotation * (time - LF_time) * 0.001); // LF_vel is in rad/s
+  LF_vel = (float)(pos - LF_pos) / (time - LF_time) * 6.283185;
+  // LF_vel = (float)(pos - LF_pos) * 6.283185 / ((time - LF_time) * 0.001);
 	LF_pos = pos;
 	LF_time = time;
 	#if DEBUG_ENCODERS
@@ -33,9 +36,11 @@ void updateLF(ESPRotary& r)
 
 void updateRF(ESPRotary& r)
 {
-	int time = millis();
+	unsigned long time = millis();
 	int pos = r.getPosition();
-	RF_vel = (float) (pos - RF_pos) / (time - RF_time);
+	// RF_vel = (2 * PI * (pos - RF_pos)) / (ticks_per_rotation * (time - RF_time) * 0.001);
+  RF_vel = (float)(pos - RF_pos) / (time - RF_time) * 6.283185;
+  // RF_vel = (float)(pos - RF_pos) * 6.283185 / ((time - RF_time) * 0.001);
 	RF_pos = pos;
 	RF_time = time;
 	#if DEBUG_ENCODERS
@@ -45,9 +50,11 @@ void updateRF(ESPRotary& r)
 
 void updateLB(ESPRotary& r)
 {
-	int time = millis();
+	unsigned long time = millis();
 	int pos = r.getPosition();
-	LB_vel = (float) (pos - LB_pos) / (time - LB_time);
+	// LB_vel = (2 * PI * (pos - LB_pos)) / (ticks_per_rotation * (time - LB_time) * 0.001);
+  LB_vel = (float)(pos - LB_pos) / (time - LB_time) * 6.283185;
+  // LB_vel = (float)(pos - LB_pos) * 6.283185 / ((time - LB_time) * 0.001);
 	LB_pos = pos;
 	LB_time = time;
 	#if DEBUG_ENCODERS
@@ -57,9 +64,11 @@ void updateLB(ESPRotary& r)
 
 void updateRB(ESPRotary& r)
 {
-	int time = millis();
+	unsigned long time = millis();
 	int pos = r.getPosition();
-	RB_vel = (float) (pos - RB_pos) / (time - RB_time);
+	// RB_vel = (2 * PI * (pos - RB_pos)) / (ticks_per_rotation * (time - RB_time) * 0.001);
+  RB_vel = (float)(pos - RB_pos) / (time - RB_time) * 6.283185;
+  // RB_vel = (float)(pos - RB_pos) * 6.283185 / ((time - RB_time) * 0.001);
 	RB_pos = pos;
 	RB_time = time;
 	#if DEBUG_ENCODERS

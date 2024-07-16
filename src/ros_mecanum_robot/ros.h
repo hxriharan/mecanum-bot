@@ -1,32 +1,97 @@
+#ifndef ROS_H
+#define ROS_H
+
 #include <ros.h>
 #include <geometry_msgs/Twist.h>
+#include <nav_msgs/Odometry.h>
+#include <tf/transform_broadcaster.h>
+#include <geometry_msgs/Quaternion.h>
+#include <tf/tf.h>
+// #include "odom.h"
 
 #define LED_BUILTIN 2
-
 
 bool connected = false;
 bool movement = false;
 float x = 0, y = 0, z = 0;
 
+extern ros::NodeHandle nh;
+extern ros::Publisher odom_pub;
+extern ros::Subscriber<geometry_msgs::Twist> sub;
+extern tf::TransformBroadcaster broadcaster;  // Declare broadcaster here
+extern nav_msgs::Odometry odom_msg;
+extern geometry_msgs::TransformStamped odom_trans;
 void onTwist(const geometry_msgs::Twist &msg);
 
-// ROS serial server
-ros::NodeHandle node;
-ros::Subscriber<geometry_msgs::Twist> sub("/cmd_vel", &onTwist);
+
+// Odometry variables
+double x_pos = 0, y_pos = 0, theta_pos = 0;
+double x_vel = 0, y_vel = 0, theta_vel = 0;
+
+geometry_msgs::Quaternion createQuaternionMsgFromYaw(double yaw) {
+  geometry_msgs::Quaternion q;
+  q.w = cos(yaw * 0.5);
+  q.x = 0.0;
+  q.y = 0.0;
+  q.z = sin(yaw * 0.5);
+  return q;
+}
 
 void setupROS()
 {
   // Connect to rosserial socket server and init node. (Using default port of 11411)
   Serial.printf("[INFO] (ros) Connecting to ROS serial server at %s\n", server.toString().c_str());
-  node.getHardware()->setConnection(server);
-  node.initNode();
-  node.subscribe(sub);
+  nh.getHardware()->setConnection(server);
+  nh.initNode();
+  nh.subscribe(sub);
+  nh.advertise(odom_pub);
+  broadcaster.init(nh);
+}
+
+void publishOdometry()
+{
+  // Publish odometry message
+  static nav_msgs::Odometry odom_msg;
+  
+  // Populate odometry message fields
+  odom_msg.header.stamp = nh.now();
+  odom_msg.header.frame_id = "odom";  
+  // Position
+  odom_msg.pose.pose.position.x = x_pos * 100;
+  odom_msg.pose.pose.position.y = y_pos * 100;
+  odom_msg.pose.pose.position.z = 0.0;
+  odom_msg.pose.pose.orientation = createQuaternionMsgFromYaw(theta_pos);
+  
+  odom_msg.child_frame_id = "base_link";
+  // Velocity
+  odom_msg.twist.twist.linear.x = x_vel;
+  odom_msg.twist.twist.linear.y = y_vel;
+  odom_msg.twist.twist.angular.z = theta_vel;
+  // Publish the odometry message
+  odom_pub.publish(&odom_msg);
+
+  // Serial.print("Odometry message size: ");
+  // Serial.println(sizeof(odom_msg));
+
+  // Broadcast the transform odom->base_link
+  static geometry_msgs::TransformStamped odom_trans;
+  odom_trans.header.stamp = nh.now();
+  odom_trans.header.frame_id = "odom";
+  odom_trans.child_frame_id = "base_link";
+
+  odom_trans.transform.translation.x = x_pos * 100;
+  odom_trans.transform.translation.y = y_pos * 100;
+  odom_trans.transform.translation.z = 0.0; // Ensure z is 0.0 for a 2D robot
+  odom_trans.transform.rotation = createQuaternionMsgFromYaw(theta_pos);
+
+  // Send the transform
+  broadcaster.sendTransform(odom_trans);
 }
 
 void loopROS()
 {
   // If value changes, notify via LED and console.
-  bool conn = node.connected();
+  bool conn = nh.connected();
   if (connected != conn)
   {
     connected = conn;
@@ -38,7 +103,8 @@ void loopROS()
     Serial.println(connected ? "ROS connected" : "ROS disconnected");
   }
   
-  node.spinOnce();
+  nh.spinOnce(); 
+  publishOdometry();
 }
 
 void stop()
@@ -64,3 +130,5 @@ void onTwist(const geometry_msgs::Twist &msg)
   else
     stop();
 }
+
+#endif // ROS_H

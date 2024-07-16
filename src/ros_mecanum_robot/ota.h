@@ -1,6 +1,5 @@
 #include <ArduinoOTA.h>
 
-
 bool updating = false;
 
 extern void stop();
