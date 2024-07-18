@@ -1,9 +1,0 @@
-
-
-void setupMotor(){
-	
-}
-
-void loopMotor(){
-		
-}

@@ -1,5 +1,0 @@
-<launch>
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_node" output="screen">
-    <param name="config_file" value="$/home/hariharan/mecanum_bot_ws/src/final_mecanumbot/mecanum-bot-dev(1)/mecanum-bot-dev/launch/ekf.yaml"/>
-  </node>
-</launch>
